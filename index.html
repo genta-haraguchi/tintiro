@@ -125,6 +125,14 @@
   #cheatBtn.armed { background:#a3282a; color:#fff; border-color:#5e1113; animation:cheatpulse 1s infinite; }
   @keyframes cheatpulse { 50%{ box-shadow:0 0 18px rgba(163,40,42,.9); } }
 
+  #cheatMenu { position:fixed; left:12px; bottom:104px; z-index:36; display:none; flex-direction:column; gap:6px; }
+  #cheatMenu button { font-family:inherit; text-align:left; font-weight:800; font-size:13px; letter-spacing:.05em;
+    background:#241c13; color:#e8d9a8; border:2px solid #0f0b07; border-radius:4px; padding:9px 12px; cursor:pointer;
+    box-shadow:2px 3px 0 rgba(15,10,6,.5); }
+  #cheatMenu button:hover { background:#3a2c1a; }
+  .skb { font-family:inherit; font-weight:800; font-size:12.5px; letter-spacing:.05em; padding:7px 11px;
+    border:2px solid #241c13; background:#faf5e6; border-radius:4px; cursor:pointer; }
+  .skb:active { transform:translate(1px,1px); }
   #quickWrap { position:fixed; right:12px; bottom:56px; z-index:35; display:none;
     flex-direction:column; gap:7px; align-items:flex-end; }
   .qBtn { font-family:inherit; font-weight:900; font-size:16px; letter-spacing:.12em; background:#a3282a; color:#fff;
@@ -338,6 +346,12 @@
 
 <!-- イカサマ/物言い -->
 <button id="cheatBtn">イカサマ賽 ×1</button>
+<div id="cheatMenu">
+  <button data-ck="shigoro">シゴロ賽　── 2倍・バレ中（全面4/5/6）</button>
+  <button data-ck="arashi">アラシ賽　── 3倍・バレ高（三つ同じ目）</button>
+  <button data-ck="pinzoro">ピンゾロ賽 ── 5倍・バレ極（全面が赤い一）</button>
+  <button data-ck="">仕込まない</button>
+</div>
 <div id="quickWrap"></div>
 <div id="accuseBar">
   <div class="abT">物言い ―― <b id="abCnt">今！</b></div>
@@ -367,6 +381,16 @@
 <div class="panel" id="lookModal">
   <div class="card">
     <h2 class="brush">見た目設定</h2>
+    <div class="lkRow" style="display:block; text-align:left;">
+      <div style="margin-bottom:7px;">賽の種類（スキン）</div>
+      <div style="display:flex; gap:6px; flex-wrap:wrap;">
+        <button class="skb" data-skin="std">白賽</button>
+        <button class="skb" data-skin="kuro">漆黒</button>
+        <button class="skb" data-skin="wood">木目</button>
+        <button class="skb" data-skin="ivory">古象牙</button>
+        <button class="skb" data-skin="aka">血赤</button>
+      </div>
+    </div>
     <div class="lkRow"><span>賽の地色</span><input type="color" id="lkBg" value="#f4eede"></div>
     <div class="lkRow"><span>賽の目の色</span><input type="color" id="lkPip" value="#1a1512"></div>
     <div class="lkRow"><span>壺の色</span><input type="color" id="lkCup" value="#241a12"></div>
@@ -390,13 +414,16 @@
       <tr><td class="r">ヒフミ（1・2・3）</td><td class="r">2倍払い</td></tr>
       <tr><td>目無し（三投して役無し）</td><td>1倍払い</td></tr>
       <tr><td class="r">ションベン／チョンボ（丼から出た）</td><td class="r">即・1倍払い</td></tr>
-      <tr><td class="r">イカサマ賽（一局に一回・全面4/5/6の賽にすり替え）</td><td class="r">露見＝5倍の罰</td></tr>
+      <tr><td class="r">イカサマ・シゴロ賽（全面4/5/6）</td><td class="r">2倍・バレ中</td></tr>
+      <tr><td class="r">イカサマ・アラシ賽（三つ同じ目）</td><td class="r">3倍・バレ高</td></tr>
+      <tr><td class="r">イカサマ・ピンゾロ賽（全面が赤い一）</td><td class="r">5倍・バレ極</td></tr>
       <tr><td>物言い（賽が転がっている間のみ・最速一人）</td><td>外れ＝2倍払い</td></tr>
     </table>
     <div class="note">
       ・親から振る。親が役なら全子と即決着、親が「目」なら子が順に出目勝負。<br>
       ・親は負け越すと交代。点が尽きた者は「飛び」。最後の一人が勝者。<br>
-      ・イカサマ賽の見抜き方 ―― 賽そのものがすり替わっている。転がる賽をよく見ろ、<b>同じ目が隣り合う面に見えたら黒</b>（本物の賽で同じ目は一面だけ）。決まれば必ずシゴロ。ただし投げ損なって丼から出れば、ただのチョンボ。<br>
+      ・イカサマ賽は一局に一つ、仕込む時に三種から選ぶ。<b>強い賽ほど見た目が露骨</b>で見抜かれやすい（露見はどれも賭金五倍の罰）。<br>
+      ・見抜き方 ―― 賽そのものがすり替わっている。転がる賽をよく見ろ、<b>同じ目が隣り合う面に見えたら黒</b>（本物の賽で同じ目は一面だけ）。ただし投げ損なって丼から出れば、ただのチョンボ。<br>
       ・キー操作 ―― シャッフル＝スペース等の連打／投擲＝スペース長押し→離す／物言い＝スペース／イカサマ仕込み＝Cキー。<br>
       ・物言いは相手の賽が<b>転がっている間だけ</b>。役が読み上げられたらもう手遅れ ―― 転がる賽の面を見抜いて先に叫べ。<br>
       ・複数人が叫んだ時は<b>最速の一人だけ</b>が採用され、的中の報酬も言いがかりの支払いもその者が背負う。<br>
@@ -654,12 +681,28 @@ const BOWL_TOP_R = 2.95, BOWL_FLOOR_R = 2.2;
   ring.rotation.x=Math.PI/2; ring.position.y=1.155; scene.add(ring);
 })();
 
-/* 見た目カスタム（賽の色・壺の色・大きさ） */
-const LOOK = { diceBg:'#f4eede', dicePip:'#1a1512', diceOne:'#a3282a', cup:'#241a12', size:0.62 };
+/* 見た目カスタム（賽の色・壺の色・大きさ・スキン） */
+const LOOK = { diceBg:'#f4eede', dicePip:'#1a1512', diceOne:'#a3282a',
+  edge:'rgba(60,50,40,.25)', style:'plain', cup:'#241a12', size:0.62 };
+const SKINS = {
+  std:  { diceBg:'#f4eede', dicePip:'#1a1512', diceOne:'#a3282a', edge:'rgba(60,50,40,.25)',  style:'plain' },
+  kuro: { diceBg:'#191310', dicePip:'#e2b54e', diceOne:'#d64533', edge:'rgba(230,190,120,.35)',style:'plain' },
+  wood: { diceBg:'#c99a5e', dicePip:'#38220e', diceOne:'#8e2320', edge:'rgba(50,28,8,.45)',   style:'wood' },
+  ivory:{ diceBg:'#ece1c4', dicePip:'#57493a', diceOne:'#b0524a', edge:'rgba(90,70,40,.3)',   style:'worn' },
+  aka:  { diceBg:'#8e1c14', dicePip:'#f2e6c4', diceOne:'#f6d98c', edge:'rgba(255,230,180,.3)',style:'plain' },
+};
 function faceTex(n){
   const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
   g.fillStyle=LOOK.diceBg; g.fillRect(0,0,128,128);
-  g.strokeStyle='rgba(60,50,40,.25)'; g.lineWidth=4; g.strokeRect(2,2,124,124);
+  if(LOOK.style==='wood'){
+    g.strokeStyle='rgba(56,32,10,.28)'; g.lineWidth=3;
+    for(let i=0;i<7;i++){ const y=8+i*18+((i*13)%9);
+      g.beginPath(); g.moveTo(0,y); g.bezierCurveTo(40,y+6, 90,y-6, 128,y+3); g.stroke(); }
+  } else if(LOOK.style==='worn'){
+    for(let i=0;i<170;i++){ g.fillStyle=`rgba(90,70,40,${Math.random()*.13})`;
+      g.fillRect(Math.random()*128,Math.random()*128,2,2); }
+  }
+  g.strokeStyle=LOOK.edge; g.lineWidth=4; g.strokeRect(2,2,124,124);
   const P={1:[[64,64]],2:[[40,40],[88,88]],3:[[36,36],[64,64],[92,92]],
     4:[[40,40],[88,40],[40,88],[88,88]],5:[[38,38],[90,38],[64,64],[38,90],[90,90]],
     6:[[40,32],[88,32],[40,64],[88,64],[40,96],[88,96]]};
@@ -670,11 +713,16 @@ function faceTex(n){
 }
 const FACE_VAL = {px:3,nx:4,py:1,ny:6,pz:2,nz:5};
 function faceAxis(v){ return {3:[1,0,0],4:[-1,0,0],1:[0,1,0],6:[0,-1,0],2:[0,0,1],5:[0,0,-1]}[v]; }
-const diceMats = [3,4,1,6,2,5].map(n=>new THREE.MeshStandardMaterial({map:faceTex(n), roughness:.45}));
-/* イカサマ賽＝全面が同じ目（4・5・6）。転がるだけで必ずシゴロになる */
-const cheatMats = [4,5,6].map(v=>{ const t=faceTex(v);
-  return [0,1,2,3,4,5].map(()=>new THREE.MeshStandardMaterial({map:t, roughness:.45})); });
-const GLOWM = diceMats.concat(cheatMats[0], cheatMats[1], cheatMats[2]);
+const ALLMATS=[];
+function regMat(m){ ALLMATS.push(m); return m; }
+const diceMats = [3,4,1,6,2,5].map(n=>regMat(new THREE.MeshStandardMaterial({map:faceTex(n), roughness:.45})));
+/* イカサマ賽＝全面が同じ目。目の値ごとに生成してキャッシュ */
+const MONO={};
+function monoMats(v){
+  if(!MONO[v]){ const t=faceTex(v);
+    MONO[v]=[0,1,2,3,4,5].map(()=>regMat(new THREE.MeshStandardMaterial({map:t, roughness:.45}))); }
+  return MONO[v];
+}
 const DIE = 0.62;
 const diceMesh=[], diceBody=[];
 
@@ -760,7 +808,7 @@ const G = {
   settleTimer:0, rollClock:0,
   cupShakeVel:{x:0,y:0}, cupOff:{x:0,y:0},
   cpuAnim:null, pending:null, replay:null,
-  cheatArmed:false,
+  cheatKind:null,
   preAccuse:null, accuseDone:true, curThrowId:0, kbCharge:false,
   input:'drag',
   lastLocal:null,
@@ -837,9 +885,9 @@ function showBanner(main, sub, tier){
 }
 function hideBanner(){ $('banner').style.display='none'; }
 function diceGlow(hex, peak){
-  GLOWM.forEach(m=>{ m.emissive=new THREE.Color(hex); });
-  tw(v=>GLOWM.forEach(m=>m.emissiveIntensity=v), 0, peak, .22, easeIO)
-    .then(()=>tw(v=>GLOWM.forEach(m=>m.emissiveIntensity=v), peak, 0, 1.0, easeIO));
+  ALLMATS.forEach(m=>{ m.emissive=new THREE.Color(hex); });
+  tw(v=>ALLMATS.forEach(m=>m.emissiveIntensity=v), 0, peak, .22, easeIO)
+    .then(()=>tw(v=>ALLMATS.forEach(m=>m.emissiveIntensity=v), peak, 0, 1.0, easeIO));
 }
 const TIERS = {
   S:{ col:'rgba(212,164,60,', zoom:1,   hold:2500, glow:0xd9a83c },
@@ -980,7 +1028,7 @@ function startLocal(kind, n){
 }
 function roundStart(){
   G.bet=0; G.attempt=1; G.parentHand=null; G.childQueue=[]; G.parentGain=0; G.forceRotate=false;
-  G.phase='bet'; G.cheatArmed=false;
+  G.phase='bet'; G.cheatKind=null;
   G.players.forEach(p=>{ p.cheatLeft=1; });   // イカサマ賽は一局ごとに一つ補充
   G.players.forEach((p,i)=>handLine(i,''));
   hideDice(); refreshHUD(); updateCheatBtn();
@@ -1061,12 +1109,18 @@ function cpuTurn(){
   msg(`【${G.attempt}投目】${name(G.current)}が壺を振っている……`);
   $('gaugewrap').style.display='none'; $('touch').classList.remove('on'); updateCheatBtn();
   const me=G.players[G.current];
-  let willCheat=false;
+  let willKind=null;
   if(me.cheatLeft>0){
     const others=G.players.filter((p,i)=>i!==G.current&&p.alive).map(p=>p.score);
     const best=others.length?Math.max(...others):me.score;
-    if(me.score<best*.55 && Math.random()<.35) willCheat=true;
-    else if(Math.random()<.06) willCheat=true;
+    let use=false;
+    if(me.score<best*.55 && Math.random()<.35) use=true;
+    else if(Math.random()<.06) use=true;
+    if(use){
+      const r=Math.random();
+      if(me.score<best*.3) willKind = r<.4?'pinzoro' : r<.75?'arashi' : 'shigoro';   // 追い詰められると大博打
+      else willKind = r<.6?'shigoro' : r<.87?'arashi' : 'pinzoro';
+    }
   }
   let t=0;
   G.cpuAnim=setInterval(()=>{ t+=90;
@@ -1075,30 +1129,38 @@ function cpuTurn(){
     if(t>1300){
       clearInterval(G.cpuAnim); G.cpuAnim=null;
       let p=.36+Math.random()*.26;
-      if(!willCheat){
+      if(!willKind){
         if(Math.random()<.05) p=.9+Math.random()*.1;
         if(Math.random()<.04) p=.04+Math.random()*.05;
       }
-      throwNow(p, willCheat);
+      throwNow(p, willKind);
     }
   },90);
 }
 
+/* ---------------- イカサマ賽の種類 ---------------- */
+const CHEAT_KINDS = {
+  shigoro:{ name:'シゴロ賽',   vals:()=>[4,5,6], spot:.68 },
+  arashi: { name:'アラシ賽',   vals:()=>{ const v=2+((Math.random()*5)|0); return [v,v,v]; }, spot:.85 },
+  pinzoro:{ name:'ピンゾロ賽', vals:()=>[1,1,1], spot:.95 },
+};
+
 /* ---------------- 投擲 ---------------- */
-function throwNow(power, forceCheat){
+function throwNow(power, forceKind){
   const cur=G.players[G.current];
-  let cheat=false;
-  if(cur.cheatLeft>0 && (forceCheat || G.cheatArmed)) cheat=true;
-  if(cheat){ cur.cheatLeft--; G.cheatArmed=false; refreshHUD(); }
+  const kind = (cur.cheatLeft>0)? (forceKind || G.cheatKind) : null;
+  let cheatVals=null;
+  if(kind){ cheatVals=CHEAT_KINDS[kind].vals(); cur.cheatLeft--; G.cheatKind=null; refreshHUD(); }
   updateCheatBtn();
   const seed=(Math.random()*2147483647)|0;
-  G.pending={power,seed,cheat};
-  doThrow(power,{seed, cheatTex:cheat});
+  G.pending={power,seed,cheat:!!kind,cheatVals};
+  doThrow(power,{seed, cheatVals});
   // CPUの物言いは転がっている間に叫ぶ（イカサマ賽の目視 or 当てずっぽう）
   if(G.mode!=='net'){
+    const seeProb = kind? CHEAT_KINDS[kind].spot : 0;
     G.players.forEach((p,i)=>{
       if(!p.cpu || !p.alive || i===G.current) return;
-      const prob = cheat? .78 : (cur.cheatLeft>0? .1 : .04);
+      const prob = kind? seeProb : (cur.cheatLeft>0? .1 : .04);
       if(Math.random()<prob){
         setTimeout(()=>{
           if(G.curThrowId===seed && !G.accuseDone){
@@ -1139,7 +1201,7 @@ function doThrow(power, o={}){
     b.velocity.set(dir.x*speed, dir.y*speed*.85 + power*.8, dir.z*speed);
     b.angularVelocity.set((rng()-.5)*15*spinBoost,(rng()-.5)*15*spinBoost,(rng()-.5)*15*spinBoost);
     b.quaternion.setFromEuler(rng()*6,rng()*6,rng()*6);
-    m.material = o.cheatTex? cheatMats[i] : diceMats;
+    m.material = o.cheatVals? monoMats(o.cheatVals[i]) : diceMats;
     m.visible=true;
   }
 }
@@ -1162,7 +1224,7 @@ async function judge(){
   const pd=G.pending||{power:.5,seed:0,cheat:false}; G.pending=null;
   const out=diceBody.map(isOut).some(Boolean);
   let vals;
-  if(pd.cheat){ vals=[4,5,6]; }   // 全面4/5/6の賽。ただし丼から出ればただのチョンボ（戻ったりしない）
+  if(pd.cheat){ vals=pd.cheatVals.slice(); }   // すり替え賽の目そのまま。丼から出ればただのチョンボ
   else vals=diceBody.map(topFace);
   const ev={t:'hand', seat:G.current, vals, out, attempt:G.attempt, power:pd.power, seed:pd.seed};
   if(pd.cheat) ev.tw=1;
@@ -1172,7 +1234,7 @@ function replayThrow(d){
   return new Promise(res=>{
     G.replay={d,res};
     hideDice();
-    doThrow(d.power,{seed:d.seed, cheatTex:!!d.tw});
+    doThrow(d.power,{seed:d.seed, cheatVals: d.tw? d.vals : null});
   });
 }
 async function finishReplay(){
@@ -1431,8 +1493,9 @@ function updateCheatBtn(){
   const p=G.players[s];
   const ok = (G.phase==='shake'||G.phase==='charge') && p && controls(s) && !p.cpu && p.cheatLeft>0;
   b.style.display= ok? 'block':'none';
-  b.classList.toggle('armed', G.cheatArmed);
-  if(p) b.textContent = G.cheatArmed? 'イカサマ賽【仕込み中】':'イカサマ賽 ×'+p.cheatLeft;
+  if(!ok) $('cheatMenu').style.display='none';
+  b.classList.toggle('armed', !!G.cheatKind);
+  if(p) b.textContent = G.cheatKind? '仕込み中【'+CHEAT_KINDS[G.cheatKind].name+'】':'イカサマ賽 ×'+p.cheatLeft;
   updateQuick();
 }
 
@@ -1555,7 +1618,11 @@ document.addEventListener('keydown', e=>{
   const p=G.players[G.current];
   const myTurn = p && !p.cpu && controls(G.current);
   // イカサマ仕込み（Cキー）
-  if(e.code==='KeyC' && !e.repeat && $('cheatBtn').style.display==='block'){ $('cheatBtn').click(); return; }
+  if(e.code==='KeyC' && !e.repeat && $('cheatBtn').style.display==='block'){
+    const order=[null,'shigoro','arashi','pinzoro'];
+    G.cheatKind=order[(order.indexOf(G.cheatKind)+1)%order.length];
+    SFX.clack(1,.8); updateCheatBtn(); return;
+  }
   // シャッフル：キー連打
   if(G.phase==='shake' && myTurn && G.input==='drag'){
     if(SHAKE_KEYS.includes(e.code)){
@@ -1798,12 +1865,17 @@ $('goRetry').onclick=()=>{
   startLocal(G.lastLocal.kind, G.lastLocal.n);
 };
 $('goTitle').onclick=()=>{ location.reload(); };
-$('cheatBtn').onclick=()=>{ SFX.clack(1,.8); G.cheatArmed=!G.cheatArmed; updateCheatBtn(); };
+$('cheatBtn').onclick=()=>{ SFX.clack(1,.8);
+  const m=$('cheatMenu'); m.style.display = (m.style.display==='flex')? 'none':'flex'; };
+document.querySelectorAll('#cheatMenu button').forEach(b=>{
+  b.onclick=()=>{ SFX.clack(1); G.cheatKind=b.dataset.ck||null;
+    $('cheatMenu').style.display='none'; updateCheatBtn(); };
+});
 
 /* ---------------- 見た目設定の適用 ---------------- */
 function applyLook(){
   [3,4,1,6,2,5].forEach((n,idx)=>{ diceMats[idx].map=faceTex(n); diceMats[idx].needsUpdate=true; });
-  [4,5,6].forEach((v,di)=>{ const t=faceTex(v); cheatMats[di].forEach(m=>{ m.map=t; m.needsUpdate=true; }); });
+  Object.keys(MONO).forEach(v=>{ const t=faceTex(+v); MONO[v].forEach(m=>{ m.map=t; m.needsUpdate=true; }); });
   cupBodyMat.color.set(LOOK.cup);
   cupBottomMat.color.set(LOOK.cup).multiplyScalar(.55);
   const sz=LOOK.size;
@@ -1823,10 +1895,14 @@ $('lkPip').oninput=e=>{ LOOK.dicePip=e.target.value; applyLook(); };
 $('lkCup').oninput=e=>{ LOOK.cup=e.target.value; applyLook(); };
 $('lkSize').oninput=e=>{ LOOK.size=(+e.target.value)/100; applyLook(); };
 $('lkReset').onclick=()=>{
-  Object.assign(LOOK,{diceBg:'#f4eede',dicePip:'#1a1512',cup:'#241a12',size:.62});
+  Object.assign(LOOK, SKINS.std, {cup:'#241a12', size:.62});
   $('lkBg').value='#f4eede'; $('lkPip').value='#1a1512'; $('lkCup').value='#241a12'; $('lkSize').value=62;
   applyLook();
 };
+document.querySelectorAll('.skb').forEach(b=>{
+  b.onclick=()=>{ SFX.clack(1); Object.assign(LOOK, SKINS[b.dataset.skin]);
+    $('lkBg').value=LOOK.diceBg; $('lkPip').value=LOOK.dicePip; applyLook(); };
+});
 
 function setInput(m){
   G.input=m;
