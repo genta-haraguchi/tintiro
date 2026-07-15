@@ -17,9 +17,8 @@
     box-shadow:0 0 0 2px #7c1c1e inset; transform:rotate(-4deg); font-size:.8em; }
 
   /* ---------- HUD ---------- */
-  #hud { position:fixed; top:0; left:0; right:0; z-index:20; display:none; justify-content:center;
-    padding:8px 8px; pointer-events:none; gap:8px; flex-wrap:wrap; }
-  .pp { flex:1 1 140px; min-width:128px; max-width:220px; background:rgba(240,233,214,.92); border:2px solid #211b14;
+  #hud { position:fixed; inset:0; z-index:20; display:none; pointer-events:none; }
+  .pp { position:fixed; width:min(212px,46vw); background:rgba(240,233,214,.92); border:2px solid #211b14;
     border-radius:4px; padding:5px 10px 7px; box-shadow:3px 4px 0 rgba(20,15,10,.45); position:relative; }
   .pp .nm { font-size:14px; font-weight:800; letter-spacing:.1em; border-bottom:1px solid #4a4036; padding-bottom:2px;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -37,6 +36,11 @@
   .ikab::before { content:'イ賽 残'; }
   .ikab.used { opacity:.4; }
   .ikab.used::before { content:'イ賽 済'; }
+  .pp.c0 { top:8px; left:8px; }
+  .pp.c1 { top:8px; right:8px; }
+  .pp.c2 { bottom:100px; left:8px; }
+  .pp.c3 { bottom:100px; right:8px; }
+  .pp.c2 .delta, .pp.c3 .delta { top:auto; bottom:100%; }
   .delta { position:absolute; left:50%; transform:translateX(-50%); top:100%; font-size:19px; font-weight:900; opacity:0; z-index:5; }
   .delta.plus { color:#1c6b33; } .delta.minus { color:#a3282a; }
   .delta.show { animation:dpop 1.4s ease forwards; }
@@ -211,6 +215,13 @@
   #inputBtn { position:fixed; right:86px; bottom:12px; z-index:26; display:none; font-family:inherit;
     background:rgba(240,233,214,.92); border:2px solid #1c150e; border-radius:4px; font-weight:800; letter-spacing:.1em;
     padding:7px 13px; cursor:pointer; box-shadow:2px 3px 0 rgba(15,10,6,.4); font-size:13px; }
+  #lookBtn { position:fixed; right:196px; bottom:12px; z-index:26; display:none; font-family:inherit;
+    background:rgba(240,233,214,.92); border:2px solid #1c150e; border-radius:4px; font-weight:800; letter-spacing:.1em;
+    padding:7px 13px; cursor:pointer; box-shadow:2px 3px 0 rgba(15,10,6,.4); font-size:13px; }
+  .lkRow { display:flex; justify-content:space-between; align-items:center; margin:11px 0;
+    font-weight:800; letter-spacing:.15em; font-size:14px; }
+  .lkRow input[type=color] { width:58px; height:34px; border:2px solid #241c13; background:#faf5e6; cursor:pointer; border-radius:4px; padding:2px; }
+  .lkRow input[type=range] { width:55%; accent-color:#a3282a; }
   #titleBtn { position:fixed; left:12px; bottom:12px; z-index:26; display:none; font-family:inherit;
     background:rgba(30,23,16,.9); color:#efe6cf; border:2px solid #0c0906; border-radius:4px; font-weight:800;
     letter-spacing:.2em; padding:7px 13px; cursor:pointer; font-size:13px; }
@@ -260,6 +271,7 @@
     </div>
     <button class="wbtn gold" id="btnOnline">オンライン勝負（部屋を作る／入る）</button>
     <button class="wbtn ghost" id="btnYakuT">役 表・イカサマ心得</button>
+    <button class="wbtn ghost" id="btnLookT">見た目設定（賽・壺の色）</button>
     <div class="inputsel">
       <span>振り方：</span>
       <button class="selbtn on" id="selDrag">ドラッグ式（トラックボール推奨）</button>
@@ -272,7 +284,7 @@
     </div>
   </div>
   <div class="foot">丼に賽を三つ。振って、溜めて、放て。丼から出れば ―― チョンボ。<br>
-  イカサマ賽は一試合に一度きり。シゴロが出たら「物言い」の好機なり。</div>
+  イカサマ賽は一局に一度。賽が転がっている間だけ「物言い」が叫べる。</div>
 </div>
 
 <!-- オンライン入室 -->
@@ -348,7 +360,24 @@
 
 <button id="yakuBtn">役表</button>
 <button id="inputBtn">振り方：ドラッグ式</button>
+<button id="lookBtn">見た目</button>
 <button id="titleBtn">タイトルへ</button>
+
+<!-- 見た目設定 -->
+<div class="panel" id="lookModal">
+  <div class="card">
+    <h2 class="brush">見た目設定</h2>
+    <div class="lkRow"><span>賽の地色</span><input type="color" id="lkBg" value="#f4eede"></div>
+    <div class="lkRow"><span>賽の目の色</span><input type="color" id="lkPip" value="#1a1512"></div>
+    <div class="lkRow"><span>壺の色</span><input type="color" id="lkCup" value="#241a12"></div>
+    <div class="lkRow"><span>賽の大きさ</span><input type="range" id="lkSize" min="45" max="90" value="62"></div>
+    <div class="row">
+      <button class="wbtn ghost sm" id="lkReset">標準に戻す</button>
+      <button class="wbtn sm" id="lookClose">閉じる</button>
+    </div>
+    <div class="note">※ 見た目は自分の画面だけに反映されます。賽を大きくすると丼から出やすくなるので注意。</div>
+  </div>
+</div>
 
 <div id="yakuModal">
   <div class="card">
@@ -361,13 +390,14 @@
       <tr><td class="r">ヒフミ（1・2・3）</td><td class="r">2倍払い</td></tr>
       <tr><td>目無し（三投して役無し）</td><td>1倍払い</td></tr>
       <tr><td class="r">ションベン／チョンボ（丼から出た）</td><td class="r">即・1倍払い</td></tr>
-      <tr><td class="r">イカサマ賽（一試合一回・次の投擲が必ずシゴロ）</td><td class="r">露見＝5倍の罰</td></tr>
+      <tr><td class="r">イカサマ賽（一局に一回・全面4/5/6の賽にすり替え）</td><td class="r">露見＝5倍の罰</td></tr>
       <tr><td>物言い（賽が転がっている間のみ・最速一人）</td><td>外れ＝2倍払い</td></tr>
     </table>
     <div class="note">
       ・親から振る。親が役なら全子と即決着、親が「目」なら子が順に出目勝負。<br>
       ・親は負け越すと交代。点が尽きた者は「飛び」。最後の一人が勝者。<br>
-      ・イカサマ賽の見抜き方 ―― 賽そのものがすり替わっている。転がる賽をよく見ろ、<b>同じ目が隣り合う面に見えたら黒</b>（本物の賽で同じ目は一面だけ）。丼を飛び出した賽がスッと滑って戻るのも黒。そして必ずシゴロが出る。<br>
+      ・イカサマ賽の見抜き方 ―― 賽そのものがすり替わっている。転がる賽をよく見ろ、<b>同じ目が隣り合う面に見えたら黒</b>（本物の賽で同じ目は一面だけ）。決まれば必ずシゴロ。ただし投げ損なって丼から出れば、ただのチョンボ。<br>
+      ・キー操作 ―― シャッフル＝スペース等の連打／投擲＝スペース長押し→離す／物言い＝スペース／イカサマ仕込み＝Cキー。<br>
       ・物言いは相手の賽が<b>転がっている間だけ</b>。役が読み上げられたらもう手遅れ ―― 転がる賽の面を見抜いて先に叫べ。<br>
       ・複数人が叫んだ時は<b>最速の一人だけ</b>が採用され、的中の報酬も言いがかりの支払いもその者が背負う。<br>
       ・同席戦でイカサマを仕込む時は、画面を隠して押すが仁義。
@@ -624,14 +654,16 @@ const BOWL_TOP_R = 2.95, BOWL_FLOOR_R = 2.2;
   ring.rotation.x=Math.PI/2; ring.position.y=1.155; scene.add(ring);
 })();
 
+/* 見た目カスタム（賽の色・壺の色・大きさ） */
+const LOOK = { diceBg:'#f4eede', dicePip:'#1a1512', diceOne:'#a3282a', cup:'#241a12', size:0.62 };
 function faceTex(n){
   const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
-  g.fillStyle='#f4eede'; g.fillRect(0,0,128,128);
+  g.fillStyle=LOOK.diceBg; g.fillRect(0,0,128,128);
   g.strokeStyle='rgba(60,50,40,.25)'; g.lineWidth=4; g.strokeRect(2,2,124,124);
   const P={1:[[64,64]],2:[[40,40],[88,88]],3:[[36,36],[64,64],[92,92]],
     4:[[40,40],[88,40],[40,88],[88,88]],5:[[38,38],[90,38],[64,64],[38,90],[90,90]],
     6:[[40,32],[88,32],[40,64],[88,64],[40,96],[88,96]]};
-  g.fillStyle = (n===1)?'#a3282a':'#1a1512';
+  g.fillStyle = (n===1)? LOOK.diceOne : LOOK.dicePip;
   const r = (n===1)?22:11;
   for(const [x,y] of P[n]){ g.beginPath(); g.arc(x,y,r,0,Math.PI*2); g.fill(); }
   return new THREE.CanvasTexture(c);
@@ -692,14 +724,15 @@ for(let i=0;i<3;i++){
 }
 
 const cup = new THREE.Group();
+let cupBodyMat=null, cupBottomMat=null;
 {
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(.62,.55,1.5,24,1,true),
-    new THREE.MeshStandardMaterial({ color:0x241a12, roughness:.5, side:THREE.DoubleSide }));
+  cupBodyMat = new THREE.MeshStandardMaterial({ color:0x241a12, roughness:.5, side:THREE.DoubleSide });
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.62,.55,1.5,24,1,true), cupBodyMat);
   const band=new THREE.Mesh(new THREE.TorusGeometry(.62,.05,8,24),
     new THREE.MeshStandardMaterial({ color:0x8e2320, roughness:.5 }));
   band.rotation.x=Math.PI/2; band.position.y=.72;
-  const bottom=new THREE.Mesh(new THREE.CircleGeometry(.55,24),
-    new THREE.MeshStandardMaterial({ color:0x1a120c, roughness:.6 }));
+  cupBottomMat = new THREE.MeshStandardMaterial({ color:0x1a120c, roughness:.6 });
+  const bottom=new THREE.Mesh(new THREE.CircleGeometry(.55,24), cupBottomMat);
   bottom.rotation.x=Math.PI/2; bottom.position.y=-.74;
   cup.add(body,band,bottom);
   cup.visible=false; scene.add(cup);
@@ -728,7 +761,7 @@ const G = {
   cupShakeVel:{x:0,y:0}, cupOff:{x:0,y:0},
   cpuAnim:null, pending:null, replay:null,
   cheatArmed:false,
-  preAccuse:null, accuseDone:true, curThrowId:0,
+  preAccuse:null, accuseDone:true, curThrowId:0, kbCharge:false,
   input:'drag',
   lastLocal:null,
 };
@@ -749,7 +782,7 @@ function msg(t){ const m=$('msg'); if(!t){ m.style.display='none'; return;} m.st
 function renderHUD(){
   const hud=$('hud'); hud.innerHTML='';
   G.players.forEach((p,i)=>{
-    const d=document.createElement('div'); d.className='pp'; d.id='pp'+i;
+    const d=document.createElement('div'); d.className='pp c'+Math.min(i,3); d.id='pp'+i;
     d.innerHTML=`<div class="nm">${esc(p.name)}</div>
       <div class="pt"><span id="pt${i}">0</span><small> 点</small></div>
       <div class="handline" id="hl${i}"></div>
@@ -893,14 +926,6 @@ function snapFaces(vals,dur=.2,noisy=false){
   });
   return Promise.all(jobs).then(()=>{ if(noisy) SFX.clack(.8,1.5); });
 }
-async function cheatFix(){
-  // イカサマ賽（全面4/5/6）は転がるだけで必ずシゴロ。丼を出た賽だけスッと滑って戻る（これも黒）
-  const outs=diceBody.map(isOut);
-  diceBody.forEach(b=>b.sleep());
-  const jobs=[];
-  for(let i=0;i<3;i++){ if(outs[i]) jobs.push(tweenPos(i,SPOTS[i],.3)); }
-  if(jobs.length){ SFX.swish(); await Promise.all(jobs); await wait(120); }
-}
 function slideOut(i){
   const p=diceMesh[i].position;
   const a=Math.atan2(p.z||.3, p.x||.3);
@@ -930,7 +955,8 @@ function handleAccuseEvent(e){ if(e.t==='accuse') onAccuse(e); else onAccusePass
 
 /* ---------------- ラウンド進行 ---------------- */
 function showGameUI(){
-  $('hud').style.display='flex'; $('roundinfo').style.display='block';
+  $('hud').style.display='block'; $('roundinfo').style.display='block';
+  $('lookBtn').style.display='block';
   $('yakuBtn').style.display='block'; $('titleBtn').style.display='block';
   $('inputBtn').style.display='block'; setInput(G.input);
 }
@@ -955,6 +981,7 @@ function startLocal(kind, n){
 function roundStart(){
   G.bet=0; G.attempt=1; G.parentHand=null; G.childQueue=[]; G.parentGain=0; G.forceRotate=false;
   G.phase='bet'; G.cheatArmed=false;
+  G.players.forEach(p=>{ p.cheatLeft=1; });   // イカサマ賽は一局ごとに一つ補充
   G.players.forEach((p,i)=>handLine(i,''));
   hideDice(); refreshHUD(); updateCheatBtn();
   const chooser=nextAlive(G.parent); G.betChooser=chooser;
@@ -1011,7 +1038,7 @@ function humanShake(){
   if(G.input==='real'){
     msg(`【${G.attempt}投目】左右ボタンを両方押し込んだまま\nマウスを持ち上げて（裏返して）思い切り振れ！`);
   } else {
-    msg(`【${G.attempt}投目】壺を掴んで、力の限り振れ！\n（画面をドラッグでシャッフル）`);
+    msg(`【${G.attempt}投目】壺を掴んで、力の限り振れ！\n（画面ドラッグ／スペース等のキー連打）`);
   }
   $('gaugelabel').textContent='シャッフル';
   $('gfill').className=''; $('gfill').style.width='0%';
@@ -1023,7 +1050,7 @@ function humanShake(){
 function toCharge(){
   G.phase='charge'; G.charging=false; G.power=0; G.powerT=0;
   updateCheatBtn();
-  msg('よし、良い音だ。\n長押しで力を溜め、離して丼へ放て！');
+  msg('よし、良い音だ。\n長押し（スペース長押しでも可）で力を溜め、離して放て！');
   $('gaugelabel').textContent='投擲力';
   const gf=$('gfill'); gf.className='power'; gf.style.width='0%';
   const z=$('gzone'); z.style.display='block'; z.style.left='30%'; z.style.width='54%';
@@ -1038,8 +1065,8 @@ function cpuTurn(){
   if(me.cheatLeft>0){
     const others=G.players.filter((p,i)=>i!==G.current&&p.alive).map(p=>p.score);
     const best=others.length?Math.max(...others):me.score;
-    if(me.score<best*.55 && Math.random()<.5) willCheat=true;
-    else if(Math.random()<.1) willCheat=true;
+    if(me.score<best*.55 && Math.random()<.35) willCheat=true;
+    else if(Math.random()<.06) willCheat=true;
   }
   let t=0;
   G.cpuAnim=setInterval(()=>{ t+=90;
@@ -1133,8 +1160,9 @@ function checkSettle(dt){
 }
 async function judge(){
   const pd=G.pending||{power:.5,seed:0,cheat:false}; G.pending=null;
-  let outs=diceBody.map(isOut), out=outs.some(Boolean), vals;
-  if(pd.cheat){ await cheatFix(); out=false; vals=[4,5,6]; }
+  const out=diceBody.map(isOut).some(Boolean);
+  let vals;
+  if(pd.cheat){ vals=[4,5,6]; }   // 全面4/5/6の賽。ただし丼から出ればただのチョンボ（戻ったりしない）
   else vals=diceBody.map(topFace);
   const ev={t:'hand', seat:G.current, vals, out, attempt:G.attempt, power:pd.power, seed:pd.seed};
   if(pd.cheat) ev.tw=1;
@@ -1519,6 +1547,45 @@ function pointerUp(e){
 touch.addEventListener('pointerup', pointerUp);
 touch.addEventListener('pointercancel', pointerUp);
 
+/* ---------------- キーボード操作 ---------------- */
+const SHAKE_KEYS=['Space','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','KeyW','KeyA','KeyS','KeyD'];
+document.addEventListener('keydown', e=>{
+  if(e.target && (e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')) return;
+  if(document.activeElement && document.activeElement.tagName==='BUTTON') document.activeElement.blur();
+  const p=G.players[G.current];
+  const myTurn = p && !p.cpu && controls(G.current);
+  // イカサマ仕込み（Cキー）
+  if(e.code==='KeyC' && !e.repeat && $('cheatBtn').style.display==='block'){ $('cheatBtn').click(); return; }
+  // シャッフル：キー連打
+  if(G.phase==='shake' && myTurn && G.input==='drag'){
+    if(SHAKE_KEYS.includes(e.code)){
+      e.preventDefault(); if(e.repeat) return;
+      SFX.ctx();
+      G.shakeMeter=Math.min(100, G.shakeMeter+9);
+      G.cupShakeVel.x+=(Math.random()-.5)*.6; G.cupShakeVel.y+=(Math.random()-.5)*.6;
+      SFX.clack(.8+Math.random()*.5, 1.3);
+    } else if(e.code==='Enter' && G.shakeMeter>=40){ e.preventDefault(); toCharge(); }
+    return;
+  }
+  // 投擲：スペース/Enter長押しで溜め
+  if(G.phase==='charge' && myTurn && (e.code==='Space'||e.code==='Enter')){
+    e.preventDefault();
+    if(!G.charging){ G.charging=true; G.powerT=0; G.kbCharge=true; SFX.swish(); }
+    return;
+  }
+  // 物言い：スペース（自分の「待った！」ボタンを叩く）
+  if(e.code==='Space' && ['rolling','judge'].includes(G.phase)){
+    const b=document.querySelector('#quickWrap .qBtn');
+    if(b){ e.preventDefault(); b.click(); }
+  }
+});
+document.addEventListener('keyup', e=>{
+  if(G.phase==='charge' && G.kbCharge && (e.code==='Space'||e.code==='Enter')){
+    G.kbCharge=false;
+    if(G.charging){ G.charging=false; throwNow(G.power/100); }
+  }
+});
+
 /* ---------------- オンライン（Firebase Realtime Database） ---------------- */
 const NET={db:null,code:null,roomRef:null,evRef:null,mySeat:-1,host:false,lobbyPlayers:[]};
 function fbReady(){
@@ -1531,6 +1598,10 @@ function fbReady(){
     alert('オンライン対戦には index.html 冒頭の FIREBASE_CONFIG に自分のFirebase設定を貼る必要があります（README参照）。');
     return false;
   }
+  if(!FIREBASE_CONFIG.databaseURL || FIREBASE_CONFIG.databaseURL.indexOf('your-app')>=0 || FIREBASE_CONFIG.databaseURL.indexOf('★')>=0){
+    alert('FIREBASE_CONFIG の databaseURL が未設定です。\nFirebaseコンソール → Realtime Database のページ上部に出ている\nhttps://～.firebasedatabase.app のURLを databaseURL に貼ってください。');
+    return false;
+  }
   try{ firebase.initializeApp(FIREBASE_CONFIG); NET.db=firebase.database(); return true; }
   catch(e){ alert('Firebase初期化に失敗: '+e.message); return false; }
 }
@@ -1540,8 +1611,17 @@ async function createRoom(){
   const nm=($('nmInput').value.trim()||'名無し').slice(0,8);
   const code=roomCode(); NET.code=code; NET.host=true;
   NET.roomRef=NET.db.ref('rooms/'+code);
-  await NET.roomRef.set({ meta:{status:'lobby',host:myUid,created:Date.now()},
-    players:{ [myUid]:{name:nm,seat:0,on:true} } });
+  try{
+    await Promise.race([
+      NET.roomRef.set({ meta:{status:'lobby',host:myUid,created:Date.now()},
+        players:{ [myUid]:{name:nm,seat:0,on:true} } }),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('接続タイムアウト。databaseURLが正しいか確認してください')), 8000))
+    ]);
+  }catch(e){
+    alert('部屋を作れませんでした: '+(e.code||'')+' '+e.message+
+      '\n\nよくある原因:\n・databaseURLの貼り忘れ/間違い\n・Realtime Databaseのルールで書き込み拒否（テストモード期限切れ）');
+    return;
+  }
   enterLobby();
 }
 async function joinRoom(){
@@ -1550,7 +1630,13 @@ async function joinRoom(){
   const code=($('codeInput').value||'').toUpperCase().trim();
   if(code.length<4){ alert('部屋コードを入れてください'); return; }
   NET.code=code; NET.roomRef=NET.db.ref('rooms/'+code);
-  const snap=await NET.roomRef.child('meta').once('value');
+  let snap;
+  try{
+    snap=await Promise.race([
+      NET.roomRef.child('meta').once('value'),
+      new Promise((_,rej)=>setTimeout(()=>rej(new Error('接続タイムアウト。databaseURLが正しいか確認してください')), 8000))
+    ]);
+  }catch(e){ alert('部屋に接続できませんでした: '+(e.code||'')+' '+e.message); return; }
   const meta=snap.val();
   if(!meta){ alert('部屋が見つかりません'); return; }
   if(meta.status!=='lobby'){ alert('この部屋はもう始まっています'); return; }
@@ -1713,6 +1799,34 @@ $('goRetry').onclick=()=>{
 };
 $('goTitle').onclick=()=>{ location.reload(); };
 $('cheatBtn').onclick=()=>{ SFX.clack(1,.8); G.cheatArmed=!G.cheatArmed; updateCheatBtn(); };
+
+/* ---------------- 見た目設定の適用 ---------------- */
+function applyLook(){
+  [3,4,1,6,2,5].forEach((n,idx)=>{ diceMats[idx].map=faceTex(n); diceMats[idx].needsUpdate=true; });
+  [4,5,6].forEach((v,di)=>{ const t=faceTex(v); cheatMats[di].forEach(m=>{ m.map=t; m.needsUpdate=true; }); });
+  cupBodyMat.color.set(LOOK.cup);
+  cupBottomMat.color.set(LOOK.cup).multiplyScalar(.55);
+  const sz=LOOK.size;
+  for(let i=0;i<3;i++){
+    diceMesh[i].scale.setScalar(sz/DIE);
+    const sh=diceBody[i].shapes[0];
+    sh.halfExtents.set(sz/2,sz/2,sz/2);
+    sh.updateConvexPolyhedronRepresentation();
+    diceBody[i].updateBoundingRadius();
+  }
+}
+$('btnLookT').onclick=()=>{ SFX.clack(1); $('lookModal').style.display='flex'; };
+$('lookBtn').onclick=()=>{ SFX.clack(1); $('lookModal').style.display='flex'; };
+$('lookClose').onclick=()=>{ $('lookModal').style.display='none'; };
+$('lkBg').oninput=e=>{ LOOK.diceBg=e.target.value; applyLook(); };
+$('lkPip').oninput=e=>{ LOOK.dicePip=e.target.value; applyLook(); };
+$('lkCup').oninput=e=>{ LOOK.cup=e.target.value; applyLook(); };
+$('lkSize').oninput=e=>{ LOOK.size=(+e.target.value)/100; applyLook(); };
+$('lkReset').onclick=()=>{
+  Object.assign(LOOK,{diceBg:'#f4eede',dicePip:'#1a1512',cup:'#241a12',size:.62});
+  $('lkBg').value='#f4eede'; $('lkPip').value='#1a1512'; $('lkCup').value='#241a12'; $('lkSize').value=62;
+  applyLook();
+};
 
 function setInput(m){
   G.input=m;
